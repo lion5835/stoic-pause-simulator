@@ -7,7 +7,7 @@
   const BREATH_IN = 4;
   const BREATH_OUT = 6;
   const BREATH_TOTAL = 120;
-  const WAIT_SEC = 600;
+  const WAIT_MINS = [2, 5, 10, 15];
   const AGE_MEDIAN_RMSSD = 27;
   const PC_MIN = 300, PC_MAX = 1400;
 
@@ -277,6 +277,7 @@
           hunger: 2+Math.floor(r()*8),
           emotions:[...new Set(emo)],
           choice, alt: choice==='alt'?ALTS[Math.floor(r()*ALTS.length)]:'',
+          waitMin: choice==='wait' ? WAIT_MINS[Math.floor(r()*WAIT_MINS.length)] : null,
           outcome, rmssdStart: +(pack.rec.rmssd-4+r()*6).toFixed(1),
           rmssdEnd: +(pack.rec.rmssd+6+r()*10).toFixed(1),
           durationSec: BREATH_TOTAL
@@ -422,7 +423,7 @@
             <i class="dot ${p.outcome==='ate'?'warn':p.outcome==='pending'?'mute':''}"></i>
             <div class="sp">
               <b>${outcomeLabel(p)}</b>
-              <div class="muted num">${fmtTime(p.ts)} · 飢餓 ${p.hunger}/10${p.emotions.length?' · '+p.emotions.join('、'):''}</div>
+              <div class="muted num">${fmtTime(p.ts)} · 飢餓 ${p.hunger}/10${waitHint(p)}${p.emotions.length?' · '+p.emotions.join('、'):''}</div>
             </div>
           </div>`).join('') || '<p class="muted" style="margin:10px 0 0">按「我想吃東西」開始一次止念。</p>'}
       </div>
@@ -436,8 +437,14 @@
     `;
     if(b && $('#homeEmb')) drawEmblem($('#homeEmb'), b, pts);
   }
+  function waitMinOf(p){ return p && p.waitMin ? p.waitMin : null; }
+  function waitHint(p){ const m=waitMinOf(p); return m?` · 等 ${m} 分鐘`:''; }
   function outcomeLabel(p){
-    return ({held:'等過了，沒有立刻吃', mindful:'正念地吃', alt:'做了替代行動', ate:'後來還是吃了', pending:'等待中'})[p.outcome] || p.choice;
+    const m=waitMinOf(p);
+    if(p.outcome==='held') return m?`等了 ${m} 分鐘，沒有立刻吃`:'等過了，沒有立刻吃';
+    if(p.outcome==='pending') return m?`等待 ${m} 分鐘中`:'等待中';
+    if(p.outcome==='ate') return m?`等 ${m} 分鐘後還是吃了`:'後來還是吃了';
+    return ({mindful:'正念地吃', alt:'做了替代行動'})[p.outcome] || p.choice;
   }
 
   /* ---------- PAUSE ---------- */
@@ -486,14 +493,24 @@
       el.innerHTML=`
         <div class="top"><div><div class="greet">控制之內的事</div><h1>你要怎麼做？</h1><div class="sub">三種都算練習，沒有失敗</div></div></div>
         <button class="choice" type="button" data-act="choose" data-v="mindful"><span class="ms">ramen_dining</span><div><b>正念地吃</b><small>坐下、放下螢幕，吃到飽足的八分。承認這是選擇，不是失控。</small></div></button>
-        <button class="choice" type="button" data-act="choose" data-v="wait"><span class="ms">hourglass</span><div><b>再等 10 分鐘</b><small>塞內卡說，憤怒最好的解藥是延遲。渴望也一樣。示範模式會加速。</small></div></button>
+        <div class="choice wait-card">
+          <span class="ms">hourglass</span>
+          <div class="sp">
+            <b>再等一會兒</b>
+            <small>塞內卡說，憤怒最好的解藥是延遲。選你要等多久，倒數、紀錄與儀表板都會用這個時長。示範模式可加速。</small>
+            <div class="wait-mins" role="group" aria-label="等待幾分鐘">
+              ${WAIT_MINS.map(m=>`<button type="button" class="chip" data-act="chooseWait" data-v="${m}">${m} 分鐘</button>`).join('')}
+            </div>
+          </div>
+        </div>
         <button class="choice" type="button" data-act="choose" data-v="alt"><span class="ms">directions_walk</span><div><b>做一件別的事</b><small>${ALTS.join('、')}</small></div></button>`;
       return;
     }
     if(step==='wait'){
-      const left=pauseDraft.waitLeft ?? WAIT_SEC;
+      const mins=pauseDraft.waitMin || 10;
+      const left=pauseDraft.waitLeft ?? mins*60;
       el.innerHTML=`
-        <div class="top"><div><div class="greet">延遲即解藥</div><h1>等這波過去</h1><div class="sub">模擬倒數 · ${S.demoSpeed?'示範加速':'即時 10 分鐘'}</div></div></div>
+        <div class="top"><div><div class="greet">延遲即解藥</div><h1>等這波過去</h1><div class="sub">模擬倒數 · ${S.demoSpeed?'示範加速':'即時'} ${mins} 分鐘</div></div></div>
         <div class="wait-big num" id="waitClock">${fmtWait(left)}</div>
         <p class="muted" style="text-align:center">你不需要趕走渴望，只要不立刻服從它。</p>
         <div class="stack" style="margin-top:18px">
@@ -527,7 +544,7 @@
       <div class="card">
         <div class="ct">今日的停念</div>
         <div class="cs">${ps.length?`完成 ${ps.length} 次`:'今天還沒有止念紀錄'}</div>
-        ${ps.map(p=>`<div class="list-item"><i class="dot ${p.outcome==='ate'?'warn':''}"></i><div><b>${outcomeLabel(p)}</b><div class="muted num">${fmtTime(p.ts)} · ${p.emotions.join('、')||'未標情緒'}</div></div></div>`).join('')}
+        ${ps.map(p=>`<div class="list-item"><i class="dot ${p.outcome==='ate'?'warn':''}"></i><div><b>${outcomeLabel(p)}</b><div class="muted num">${fmtTime(p.ts)}${waitHint(p)} · ${p.emotions.join('、')||'未標情緒'}</div></div></div>`).join('')}
       </div>
       <label class="fld" for="jSuccess">哪一次我選擇得比較好？</label>
       <textarea class="box" id="jSuccess" placeholder="寫一件具體的事，例如：下午三點想吃甜的，我先喝水再等。">${esc(j.successes)}</textarea>
@@ -564,6 +581,9 @@
     pauses.forEach(p=>p.emotions.forEach(t=>{ /* emotions are not triggers */ }));
     const trigs=Object.entries(trigCount).sort((a,b)=>b[1]-a[1]).slice(0,6);
     const maxT=trigs.length?trigs[0][1]:1;
+    const waitCounts=WAIT_MINS.map(m=>({m, n:pauses.filter(p=>p.choice==='wait' && (p.waitMin||10)===m).length}));
+    const maxW=Math.max(1, ...waitCounts.map(x=>x.n));
+    const waitN=waitCounts.reduce((s,x)=>s+x.n,0);
     const lastW=weights.length?weights[weights.length-1].kg:null;
     const firstW=weights.length?weights[0].kg:null;
     const wDelta=lastW!=null && firstW!=null ? (lastW-firstW) : null;
@@ -584,6 +604,13 @@
         <div class="ct">模擬 HRV 趨勢</div>
         <div class="cs">晨間基線 RMSSD（毫秒）· 非真實生理訊號</div>
         <div class="chart-box"><canvas id="hrvChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ct">選擇的延遲</div>
+        <div class="cs">止念時選的等待時長（2／5／10／15 分鐘）</div>
+        <div class="bars">
+          ${waitN?waitCounts.map(x=>`<div class="bar-row"><span>${x.m} 分鐘</span><i style="width:${Math.max(x.n?8:0,x.n/maxW*100)}%"></i><span class="n num">${x.n}</span></div>`).join(''):'<p class="muted">還沒有「再等一會兒」的紀錄。</p>'}
+        </div>
       </div>
       <div class="card">
         <div class="ct">觸發情境</div>
@@ -803,7 +830,7 @@
   /* ---------- breath ---------- */
   let B=null, bRAF=null;
   function startCrave(){
-    pauseDraft={ hunger:5, emotions:[], step:'breathe', id:uid(), waitLeft:WAIT_SEC };
+    pauseDraft={ hunger:5, emotions:[], step:'breathe', id:uid(), waitMin:null, waitLeft:null };
     const b0=todayBaseline();
     const startR=b0?b0.rmssd:28;
     const ov=$('#ovBreath');
@@ -875,20 +902,23 @@
 
   /* ---------- wait timer ---------- */
   let W=null, wRAF=null;
-  function startWait(){
+  function startWait(min){
+    const mins = WAIT_MINS.includes(+min) ? +min : 10;
+    pauseDraft.waitMin=mins;
     pauseDraft.step='wait';
-    pauseDraft.waitLeft=WAIT_SEC;
+    pauseDraft.waitLeft=mins*60;
     renderPause();
-    W={ t0:performance.now(), last:performance.now(), sim:0 };
+    W={ t0:performance.now(), last:performance.now(), sim:0, total:mins*60 };
     cancelAnimationFrame(wRAF); wRAF=requestAnimationFrame(waitLoop);
   }
   function waitLoop(now){
     if(!W || pauseDraft.step!=='wait') return;
+    const total=W.total || (pauseDraft.waitMin||10)*60;
     const dt=Math.min(0.1,(now-W.last)/1000); W.last=now;
-    W.sim=Math.min(WAIT_SEC, W.sim + dt*speed());
-    pauseDraft.waitLeft=WAIT_SEC-W.sim;
+    W.sim=Math.min(total, W.sim + dt*speed());
+    pauseDraft.waitLeft=total-W.sim;
     const el=$('#waitClock'); if(el) el.textContent=fmtWait(pauseDraft.waitLeft);
-    if(W.sim>=WAIT_SEC){ W=null; toast('10 分鐘到了。你現在怎麼決定？'); return; }
+    if(W.sim>=total){ W=null; toast(`${pauseDraft.waitMin||10} 分鐘到了。你現在怎麼決定？`); return; }
     wRAF=requestAnimationFrame(waitLoop);
   }
   function stopWait(){ W=null; cancelAnimationFrame(wRAF); }
@@ -901,6 +931,7 @@
       hunger: pauseDraft.hunger,
       emotions: [...pauseDraft.emotions],
       choice, alt: extra && extra.alt || '',
+      waitMin: pauseDraft.waitMin || (extra && extra.waitMin) || null,
       outcome,
       rmssdStart: pauseDraft.rmssdStart||null,
       rmssdEnd: pauseDraft.rmssdEnd||null,
@@ -956,9 +987,13 @@
         break;
       }
       case 'toChoice': pauseDraft.step='choose'; renderPause(); break;
+      case 'chooseWait':
+        pauseDraft.waitMin=+v;
+        logPause('wait','pending');
+        startWait(+v);
+        break;
       case 'choose':
-        if(v==='wait'){ logPause('wait','pending'); startWait(); }
-        else if(v==='alt'){
+        if(v==='alt'){
           const alt=ALTS[Math.floor(Math.random()*ALTS.length)];
           logPause('alt','alt',{alt});
           pauseDraft.step='done'; stopWait(); renderPause();
@@ -973,7 +1008,7 @@
         logPause('wait', v);
         pauseDraft.step='done'; renderPause();
         break;
-      case 'pauseReset': pauseDraft={hunger:5,emotions:[],step:'idle',id:null}; renderPause(); break;
+      case 'pauseReset': pauseDraft={hunger:5,emotions:[],step:'idle',id:null,waitMin:null}; renderPause(); break;
       case 'trig': {
         if(!journalDraft) return;
         const i=journalDraft.triggers.indexOf(v);
