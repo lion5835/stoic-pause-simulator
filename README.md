@@ -2,7 +2,8 @@
 
 靜態網頁**模擬器**（無需後端、無需建置）。以 HRV／心跳指紋的視覺語言，搭配斯多葛「停念」，練習食欲調節與體重管理的**選擇**，而不是追逐體重數字。
 
-**線上版本：** https://lion5835.github.io/stoic-pause-simulator/
+**線上版本：** https://lion5835.github.io/stoic-pause-simulator/  
+（若 404：到 repo Settings → Pages → Source 選 `main`／根目錄並 Save。）
 
 介面為繁體中文（台灣，`zh-Hant-TW`）。桌面會顯示在手機外框裡，手機上全螢幕。所有生理與統計資料皆為瀏覽器內生成的**模擬資料**，畫面會清楚標示。
 
@@ -39,7 +40,7 @@
 
 ## 如何開啟
 
-用任何靜態伺服器開 repo 根目錄，或直接把 `index.html` 丟到 GitHub Pages（本 repo 已設定從 `main` 根目錄發布）。
+用任何靜態伺服器開 repo 根目錄。GitHub Pages 請設為 **Deploy from a branch → `main` → `/` (root)**。自動化 token 沒有權限第一次開啟 Pages，需要 repo 擁有者在 Settings → Pages 按一次 Save。啟用後網址為 https://lion5835.github.io/stoic-pause-simulator/ 。
 
 ```bash
 # 例如
