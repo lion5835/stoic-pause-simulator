@@ -394,10 +394,13 @@ textarea{resize:vertical}
   border:1px solid var(--divider);background:var(--surface);
   display:flex;gap:12px;align-items:flex-start;
 }
-.choice + .choice{margin-top:10px}
+.choice + .choice,.choice + .wait-card,.wait-card + .choice{margin-top:10px}
 .choice .ms{color:var(--brand-600);margin-top:2px}
 .choice b{display:block;font-size:16px}
 .choice small{display:block;color:var(--text-3);font-size:13px;line-height:19px;margin-top:2px}
+.wait-card{cursor:default}
+.wait-mins{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.wait-mins .chip{min-height:40px;width:100%;justify-content:center;font-weight:700;padding:0 4px}
 .wait-big{font-size:56px;font-weight:900;letter-spacing:-1px;text-align:center;margin:20px 0 8px}
 
 /* ---------- journal ---------- */
