@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-Hant-TW" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#18181b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="心型・止念：以模擬 HRV 與斯多葛停念，練習食欲調節。健康促進資訊，非診斷或治療。">
+<title>心型・止念 HeartType Stoic Pause</title>
+<script>
+(function(){
+  try{
+    var raw = localStorage.getItem('ht-stoic-pause-v1');
+    var th = raw ? (JSON.parse(raw).theme || '') : '';
+    if(!th) th = localStorage.getItem('ht-theme') || '';
+    if(!th) th = (matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', th);
+  }catch(e){ document.documentElement.setAttribute('data-theme','dark'); }
+})();
+</script>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..24,400,1,0&display=block" rel="stylesheet">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <aside class="desk-meta" aria-hidden="true">
+    <span class="sim">SIMULATOR · 模擬資料</span>
+    <b>心型・止念</b>
+    HeartType Stoic Pause<br>
+    手機框僅桌面預覽；手機上全螢幕。
+  </aside>
+
+  <div class="shell">
+    <div class="phone" id="phone">
+      <div class="phone-screen">
+        <div class="island" aria-hidden="true"></div>
+        <div class="statusbar">
+          <span class="num" id="sbTime">09:41</span>
+          <span class="sim-pill">模擬資料</span>
+          <span class="right">
+            <span class="ms sm">signal_cellular_alt</span>
+            <span class="ms sm">wifi</span>
+            <span class="ms sm">battery_full</span>
+          </span>
+        </div>
+
+        <div class="app" id="app">
+          <!-- ONBOARDING -->
+          <section id="onboarding" aria-label="引導">
+            <div class="ob-slide on" data-ob="0">
+              <div class="greet">產品概念模擬器</div>
+              <h2>心型・止念<br><span>HeartType Stoic Pause</span></h2>
+              <p>把心跳指紋（HRV）與斯多葛「停念」放在同一天的節奏裡：早晨看見狀態，渴望來時先停兩分鐘，夜晚再回顧。</p>
+              <p>這不是減肥指令，也不是醫療器材。它練習的是：<b>在食欲出現時，你還能選擇</b>。</p>
+            </div>
+            <div class="ob-slide" data-ob="1">
+              <div class="greet">斯多葛控制二分</div>
+              <h2>先分清<br><span>什麼在你手上</span></h2>
+              <p>愛比克泰德開篇就寫：有些事在我們能力之內，有些則否。止念從這裡開始。</p>
+              <div class="split">
+                <div class="box in">
+                  <b>在你控制內</b>
+                  <ul>
+                    <li>停下來、呼吸</li>
+                    <li>分辨身體飢餓或情緒飢餓</li>
+                    <li>選擇怎麼吃、或先不吃</li>
+                    <li>夜晚誠實回顧</li>
+                  </ul>
+                </div>
+                <div class="box out">
+                  <b>無法完全控制</b>
+                  <ul>
+                    <li>體重數字本身</li>
+                    <li>渴望會不會出現</li>
+                    <li>睡眠、壓力、荷爾蒙</li>
+                    <li>別人的評價</li>
+                  </ul>
+                </div>
+              </div>
+              <p>體重是次要指標。我們在意的是：你停了幾次、選擇得清不清楚。</p>
+            </div>
+            <div class="ob-slide" data-ob="2">
+              <div class="greet">一天三個節拍</div>
+              <h2>看見、停下、<span>再寫下來</span></h2>
+              <ol class="steps-mini">
+                <li><b>1</b><div><b>晨間基線</b><div class="muted">模擬短時 HRV，得到今日心型與狀態提示，以及一句斯多葛引言。</div></div></li>
+                <li><b>2</b><div><b>止念（核心）</b><div class="muted">按「我想吃東西」→ 吸 4 吐 6 兩分鐘 → 分辨飢餓 → 正念吃／等 10 分／做別的。</div></div></li>
+                <li><b>3</b><div><b>塞內卡夜誌</b><div class="muted">回顧今天的停念、觸發與選擇。不是懺悔，是練習判斷。</div></div></li>
+              </ol>
+            </div>
+            <div class="ob-slide" data-ob="3">
+              <div class="greet">請先讀完</div>
+              <h2>這是健康促進資訊<br><span>不是診斷或治療</span></h2>
+              <p>畫面中的心電圖、Poincaré 心跳指紋、RMSSD、心率與體重，全部是瀏覽器內的<b>模擬資料</b>，並清楚標示。沒有裝置連線，也沒有後端。</p>
+              <div class="disc" style="margin-top:0">
+                本模擬器提供的是生活型態與哲學練習的概念展示，不能取代醫師、心理師或營養師的專業判斷，也不能用於診斷、治療疾病或心律失常。若你有進食疾患病史、正在接受相關治療，或出現胸痛、喘不過氣、快要昏倒，請尋求專業協助或緊急醫療（119）。
+              </div>
+            </div>
+            <div class="ob-nav">
+              <div class="dots" id="obDots"><i class="on"></i><i></i><i></i><i></i></div>
+              <div class="sp"></div>
+              <button class="btn ghost" type="button" id="obBack" hidden>上一頁</button>
+              <button class="btn pri" type="button" id="obNext">繼續</button>
+            </div>
+          </section>
+
+          <!-- HOME -->
+          <section class="screen on" id="sc-home" data-tab="home"></section>
+
+          <!-- PAUSE -->
+          <section class="screen" id="sc-pause" data-tab="pause"></section>
+
+          <!-- JOURNAL -->
+          <section class="screen" id="sc-journal" data-tab="journal"></section>
+
+          <!-- DASH -->
+          <section class="screen" id="sc-dash" data-tab="dash"></section>
+
+          <!-- SETTINGS -->
+          <section class="screen" id="sc-settings" data-tab="settings"></section>
+
+          <!-- morning overlay -->
+          <div class="ov" id="ovMeasure" aria-live="polite"></div>
+          <div class="ov" id="ovReveal"></div>
+          <div class="ov" id="ovBreath"></div>
+
+          <div class="toast" id="toast" role="status" aria-live="polite"></div>
+        </div>
+
+        <nav class="tabbar" id="tabbar" aria-label="主導覽">
+          <button class="tab on" type="button" data-tab="home"><span class="ms out">wb_sunny</span>今日</button>
+          <button class="tab" type="button" data-tab="journal"><span class="ms out">menu_book</span>夜誌</button>
+          <button class="tab fab-wrap" type="button" data-tab="pause">
+            <span class="fab" aria-hidden="true"><span class="ms">favorite</span></span>
+            <span class="lbl">止念</span>
+          </button>
+          <button class="tab" type="button" data-tab="dash"><span class="ms out">monitoring</span>趨勢</button>
+          <button class="tab" type="button" data-tab="settings"><span class="ms out">tune</span>設定</button>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
